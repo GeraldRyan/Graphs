@@ -178,7 +178,7 @@ class Graph:
                     s.push(new_path)
         return None
 
-    def dfs_recursive(self, starting_vertex, destination_vertex):
+    def dfs_recursive(self, starting_vertex, destination_vertex, path=None):
         """
         Return a list containing a path from
         starting_vertex to destination_vertex in
@@ -186,7 +186,57 @@ class Graph:
 
         This should be done using recursion.
         """
-        pass  # TODO
+
+
+        # Don't need stack because has own stack. Why you can't do bfs as recursive because put eveythign into stack
+        # Can but don't need to use visited set. Whatever makes more sense. 
+        result = None
+        if path is None:
+            path = [starting_vertex]
+        if starting_vertex == destination_vertex:
+            return path
+        else:
+            v = path[-1]
+            for next_vert in self.get_neighbors(v):
+                if next_vert not in path:
+                    new_path = list(path)
+                    new_path.append(next_vert)
+                    result = self.dfs_recursive(starting_vertex, destination_vertex, new_path)
+
+            return result
+
+        return None
+
+# Hint: Check to see if something is in path 
+
+
+
+
+        # s = Stack()
+        # s.push([starting_vertex])
+        # # Create a Set to store visited vertices
+        # visited = set()  
+        # # While the queue is not empty...
+        # while s.size() > 0:
+        #     # Dequeue the first PATH
+        #     path = s.pop()
+        #     # Grab the last vertex from the PATH
+        #     v = path[-1]
+        #     # If that vertex has not been visited...
+        #     if v not in visited:
+        #         # CHECK IF IT'S THE TARGET
+        #         if v == destination_vertex:
+        #           # IF SO, RETURN PATH
+        #             return path
+        #         # Mark it as visited...
+        #         visited.add(v)
+        #         # Then add A PATH TO its neighbors to the back of the queue
+        #           # COPY THE PATH
+        #           # APPEND THE NEIGHOR TO THE BACK
+        #         for next_vert in self.get_neighbors(v):
+        #             new_path = list(path)
+        #             new_path.append(next_vert)
+        #             s.push(new_path)
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
