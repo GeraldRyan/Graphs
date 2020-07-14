@@ -27,21 +27,41 @@ class Graph:
         """
         Get all neighbors (edges) of a vertex.
         """
-        pass  # TODO
+        return self.vertices[vertex_id]  # TODO
 
     def bft(self, starting_vertex):
         """
         Print each vertex in breadth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
+        # create empty queue
+        q = Queue()
+        # ceate set to store visited nodes
+        visited = set()  
+        # initialize starting note
+        q.enqueue(starting_vertex)
+        # while queue isn't empty
+        while q.size() > 0:
+            # dequeue first item
+            v = q.dequeue()
+
+            if v not in visited:
+                visited.add(v)
+                # Do something with node
+                print(f'Visited {v}')
+                # add all neighbors to queue
+                for next_vert in self.get_neighbors(v):
+                    q.enqueue(next_vert)
+
 
     def dft(self, starting_vertex):
         """
         Print each vertex in depth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
+        pass
+
+        
 
     def dft_recursive(self, starting_vertex):
         """
@@ -104,6 +124,7 @@ if __name__ == '__main__':
         {1: {2}, 2: {3, 4}, 3: {5}, 4: {6, 7}, 5: {3}, 6: {3}, 7: {1, 6}}
     '''
     print(graph.vertices)
+    print(graph.get_neighbors(1))
 
     '''
     Valid BFT paths:
