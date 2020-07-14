@@ -88,7 +88,25 @@ class Graph:
 
         This should be done using recursion.
         """
-        pass  # TODO
+        # create empty queue
+        s = Stack()
+        # ceate set to store visited nodes
+        visited = set()  
+        # initialize starting note
+        s.push(starting_vertex)
+        # while queue isn't empty
+        while s.size() > 0:
+            # dequeue first item
+            v = s.pop()
+
+            if v not in visited:
+                visited.add(v)
+                # Do something with node
+                print(f'{v}')
+                # add all neighbors to queue
+                for next_vert in self.get_neighbors(v):
+                    s.push(next_vert)
+
 
     def bfs(self, starting_vertex, destination_vertex):
         """
@@ -96,7 +114,36 @@ class Graph:
         starting_vertex to destination_vertex in
         breath-first order.
         """
-        pass  # TODO
+        # Create an empty queue and enqueue A PATH TO the starting vertex ID
+        q = Queue()
+        q.enqueue([starting_vertex])
+        # Create a Set to store visited vertices
+        visited = set()  
+        # While the queue is not empty...
+        while q.size() > 0:
+            # Dequeue the first PATH
+            path = q.dequeue()
+            # Grab the last vertex from the PATH
+            v = path[-1]
+            # If that vertex has not been visited...
+            if v not in visited:
+                # CHECK IF IT'S THE TARGET
+                if v == destination_vertex:
+                  # IF SO, RETURN PATH
+                    return path
+                # Mark it as visited...
+                visited.add(v)
+                # Then add A PATH TO its neighbors to the back of the queue
+                  # COPY THE PATH
+                  # APPEND THE NEIGHOR TO THE BACK
+                for next_vert in self.get_neighbors(v):
+                    new_path = list(path)
+                    new_path.append(next_vert)
+                    q.enqueue(next_vert)
+        return None
+
+
+
 
     def dfs(self, starting_vertex, destination_vertex):
         """
