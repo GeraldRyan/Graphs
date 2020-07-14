@@ -48,7 +48,7 @@ class Graph:
             if v not in visited:
                 visited.add(v)
                 # Do something with node
-                print(f'Visited {v}')
+                print(f'{v}')
                 # add all neighbors to queue
                 for next_vert in self.get_neighbors(v):
                     q.enqueue(next_vert)
@@ -59,7 +59,25 @@ class Graph:
         Print each vertex in depth-first order
         beginning from starting_vertex.
         """
-        pass
+        # create empty queue
+        s = Stack()
+        # ceate set to store visited nodes
+        visited = set()  
+        # initialize starting note
+        s.push(starting_vertex)
+        # while queue isn't empty
+        while s.size() > 0:
+            # dequeue first item
+            v = s.pop()
+
+            if v not in visited:
+                visited.add(v)
+                # Do something with node
+                print(f'{v}')
+                # add all neighbors to queue
+                for next_vert in self.get_neighbors(v):
+                    s.push(next_vert)
+
 
         
 
