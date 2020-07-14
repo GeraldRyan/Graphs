@@ -201,11 +201,11 @@ class Graph:
                 if next_vert not in path:
                     new_path = list(path)
                     new_path.append(next_vert)
-                    result = self.dfs_recursive(starting_vertex, destination_vertex, new_path)
+                    result = self.dfs_recursive(new_path[-1], destination_vertex, new_path)
 
             return result
 
-        return None
+        
 
 # Hint: Check to see if something is in path 
 
