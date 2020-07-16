@@ -32,33 +32,41 @@ player = Player(world.starting_room)
 traversal_path = []
 
 
-def bft(starting_vertex):
+def bft(starting_vertex, ):
     """
     Print each vertex in breadth-first order
     beginning from starting_vertex.
     """
     # create empty queue
-    q = Queue()
+    counter = 1
+    print("starting vertex", starting_vertex)
+    q = []
     # ceate set to store visited nodes
-    traversal_list = set()
-    visited = set()  
+    visited = set()
+    traversal_path = []
     # initialize starting note
-    q.enqueue(starting_vertex)
+    q.append(starting_vertex)
     # while queue isn't empty
-    while q.size() > 0:
+    while len(q) > 0:
+        print("counter: ", counter)
+        counter += 1
         # dequeue first item
-        v = q.dequeue()
+        print("q[0] id:", q[0].id)
+        v_obj = q.pop(0)
+        print('v_obj id:', v_obj.id)
 
-        if v not in visited:
-            visited.add(v)
+        if v_obj.id not in visited:
+            visited.add(v_obj.id)
+            print('visited', visited)
             # Do something with node
-            print(f'{v}')
             # add all neighbors to queue
-            print('v value:', v)
-            for next_vert in v.get_exits():  # Need to find the get neighbors function
-                q.enqueue(next_vert)
+            for direction in v_obj.get_exits():  # Need to find the get neighbors function
+                traversal_path.append(direction)
+                print("direction", direction)
+                next_room = v_obj.get_room_in_direction(direction)
+                q.append(next_room)
 
-    return visited
+    return traversal_path
 
 traversal_path = bft(world.starting_room)
 print("Traversal Path:", traversal_path)
