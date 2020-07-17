@@ -7,6 +7,7 @@ import random
 import random
 from ast import literal_eval
 
+visited_rooms = set()
 
 def translate(dir):
     if dir == "s":
@@ -36,12 +37,6 @@ def decode(tiny_int):
     elif tiny_int ==4:
         return 'w'
 
-def print_q_ids(q):
-    q_ids = []
-    for obj in q:
-        q_ids.append(obj.id)
-    print("queue ids", q_ids)
-
 # Load world
 world = World()
 
@@ -68,57 +63,33 @@ player = Player(world.starting_room)
 traversal_path = []
 master_plan = {}
 
-def back_peddle(room, master_plan):
-    if room.id in master_plan:
-        print(room.id)
-
-def compute_path_to_terminal(starting_vertex, map, master_plan, terminal):
-    # print("Current Room", current_room)
-    traversal_path = []
-    current_room = starting_vertex.id
-    directions_by_room = map[terminal]
-    directions_by_compass = []
-    print(f"Directions by room to {terminal}", directions_by_room)
-    for next_room in directions_by_room[1:]: # ex 7 8 
-        for direction in master_plan[current_room]: # for n/s/e/w in {... 0: {'n': 1, 's': 5, 'w': 7, 'e': 3} ...}
-            # print("current room", current_room,'next room', next_room,  "master plan[curent room]", master_plan[current_room], "Direction", direction)
-            if master_plan[current_room][direction] == next_room: # if master_plan[0]['w'] == 7
-                directions_by_compass.append(direction) # [].append('w')
-                current_room = next_room
-                break
-    ruckwarts = reverse_direction(reversed(directions_by_compass))
-    traversal_path = directions_by_compass
-    traversal_path.extend(reverse_direction(directions_by_compass))
-    print("directions by compass", directions_by_compass, "to room ", terminal)    
-
-    print("directions by compass", directions_by_compass, "to room ", terminal)
-    return traversal_path
-
-
-
-def dfrandom(starting_vertex):   # depth first random
-    master_plan[starting_vertex.id] = {}
-    for exit in starting_vertex.get_exits():
-        master_plan[starting_vertex.id][exit] = '?'
-    print("master plan:", master_plan)    
-    rand_dir = decode(random.randint(1,4))
-    print("random dir", rand_dir)
-        
-
-
     
-dfrandom(world.starting_room)
+def dfrandom(starting_vertex=world.starting_room):
+    dftravel_path = []
+    rand_room = random.randint(1, len(room_graph))
+    s = Stack()
+    visited = set()
+    s.push(starting_vertex)
+    while s.size() >0:
+        v = s.pop()
+        exits = v.get_exits()
+        print('exits', exits)
+        while len(exits) > 1:
 
-traversal_path = []
-# for terminal in terminal_list:
-#     traversal_path.extend(compute_path_to_terminal(world.starting_room,room_map, master_plan, terminal))
-# compute_path_to_terminals(world.starting_room,room_map, master_plan, terminal_list)
-print("final traversal path", traversal_path)
-# traversal_path = tuple_return[0]
-# TRAVERSAL TEST
-visited_rooms = set()
-player.current_room = world.starting_room
-visited_rooms.add(player.current_room)
+            if v not in visited:
+                visited.add(v)
+                new_room = v.get_room_in_direction(decode(random.randint(1, len(exits))))
+                print('new room', new_room.id)
+    
+    return dftravel_path
+
+df_traversal_path = dfrandom()
+
+
+
+
+
+
 
 
 for move in traversal_path:
