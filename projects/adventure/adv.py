@@ -6,6 +6,24 @@ from util import Stack, Queue
 import random
 from ast import literal_eval
 
+def translate(dir):
+    if dir == "s":
+        return "n"
+    elif dir == 'n':
+        return 's'
+    elif dir == 'e':
+        return 'w'
+    elif dir == 'w':
+        return 'e'
+    else:
+        return
+
+def print_q_ids(q):
+    q_ids = []
+    for obj in q:
+        q_ids.append(obj.id)
+    print("queue ids", q_ids)
+
 # Load world
 world = World()
 
@@ -32,55 +50,57 @@ player = Player(world.starting_room)
 traversal_path = []
 master_plan = {}
 
+def back_peddle(room, master_plan):
+    if room.id in master_plan:
+        print(room.id)
+
+
 
 def bft(starting_vertex):
-    """
-    Print each vertex in breadth-first order
-    beginning from starting_vertex.
-    """
-    # create empty queue
-    counter = 1
+
     q = []
-    # ceate set to store visited nodes
     visited = set()
     traversal_path = []
-    master_plan[starting_vertex.id] = starting_vertex.get_exits()
-    print("Master plan", master_plan)
+    master_plan[starting_vertex.id] = {}
+    for exit in starting_vertex.get_exits():
+        master_plan[starting_vertex.id][exit] = '?'
+
+
+
     # initialize starting note
     q.append(starting_vertex)
-    # while queue isn't empty
+
     while len(q) > 0:
-
-        print("counter: ", counter)
-        counter += 1
-        q_ids = []
-        for i in q:
-            q_ids.append(i.id)
-        # dequeue first item
-        # print("q[0] id:", q[0].id)
+        # print_q_ids(q)
         v_obj = q.pop()
-        print("queue ids", q_ids)
 
+        # Init room in master plan
         if v_obj.id not in master_plan:
-            master_plan[v_obj.id] = v_obj.get_exits()
-            print("master plan", master_plan)        
+            master_plan[v_obj.id] = {}
+            for exit in v_obj.get_exits():
+                master_plan[v_obj.id][exit] = '?'
+        
 
-
+        # Populate visited. Not going to be as important for this exercise however, but add it to log. 
         if v_obj.id not in visited:
             visited.add(v_obj.id)
-            # print('visited', visited)
-            # Do something with node
-            # add all neighbors to queue
-        # elif v in visited:
-            # instruct it to not return whence it came somehow
-            for direction in v_obj.get_exits():  # This is doing it too fast. Getting them all at once. Have to go back to queue after having gotten one. Have to call queue. 
-                traversal_path.append(direction)
-                print('v_obj id:', v_obj.id)
-                print('v_obj get exits:', v_obj.get_exits())
-                print("Traversal Path", traversal_path)
-                # print("direction", direction)
-                next_room = v_obj.get_room_in_direction(direction)
-                q.append(next_room)
+            print('visited', visited)
+
+        # instruct it to not return whence it came somehow
+        for direction in v_obj.get_exits():
+            next_room = v_obj.get_room_in_direction(direction) # This is effectivelhy moving
+            
+            master_plan[v_obj.id][direction] = next_room.id
+            if next_room.id not in master_plan:
+                master_plan[next_room.id] = {}
+                for exit in next_room.get_exits():
+                    master_plan[next_room.id][exit] = '?'
+            
+            master_plan[next_room.id][translate(direction)] = v_obj.id
+            
+            print("master plan coming together", master_plan)
+            q.append(next_room)
+            traversal_path.append(direction)
     print("final rooms visited", visited)
     return traversal_path
 
