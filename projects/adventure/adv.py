@@ -34,13 +34,13 @@ def print_q_ids(q):
 # Load world
 world = World()
 
-
+rooms_visited = set()
 # You may uncomment the smaller graphs for development and testing purposes.
 # map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
-map_file = "maps/test_loop.txt"
+# map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
-# map_file = "maps/main_maze.txt"
+map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
@@ -61,26 +61,31 @@ def back_peddle(room, master_plan):
     if room.id in master_plan:
         print(room.id)
 
+def add_to_visited(room_id):
+    rooms_visited.add(room_id)
+
 def compute_path_to_terminal(starting_vertex, map, master_plan, terminal):
     # print("Current Room", current_room)
     traversal_path = []
-    current_room = starting_vertex.id
+    current_room = starting_vertex
     directions_by_room = map[terminal]
     directions_by_compass = []
+    add_to_visited(current_room)
     print(f"Directions by room to {terminal}", directions_by_room)
-    for next_room in directions_by_room[1:]: # ex 7 8 
+    for next_room in directions_by_room[1:]: # ex 7 8
+        add_to_visited(next_room) 
         for direction in master_plan[current_room]: # for n/s/e/w in {... 0: {'n': 1, 's': 5, 'w': 7, 'e': 3} ...}
             # print("current room", current_room,'next room', next_room,  "master plan[curent room]", master_plan[current_room], "Direction", direction)
             if master_plan[current_room][direction] == next_room: # if master_plan[0]['w'] == 7
                 directions_by_compass.append(direction) # [].append('w')
                 current_room = next_room
                 break
-    ruckwarts = reverse_direction(reversed(directions_by_compass))
+    # ruckwarts = reverse_direction(reversed(directions_by_compass))
+    print(f"directions by compass to {terminal}", directions_by_compass)
     traversal_path = directions_by_compass
-    traversal_path.extend(reverse_direction(directions_by_compass))
-    print("directions by compass", directions_by_compass, "to room ", terminal)    
-
-    print("directions by compass", directions_by_compass, "to room ", terminal)
+    print("Traversal path bit", traversal_path)
+    traversal_path.extend(reverse_direction(reversed(directions_by_compass)))
+    # print("directions by compass", directions_by_compass, "to room ", terminal)    
     return traversal_path
 
 
@@ -148,9 +153,25 @@ print("Master Plan:", tuple_return[2])
 print("Terminal List:", tuple_return[3])
 traversal_path = []
 for terminal in terminal_list:
-    traversal_path.extend(compute_path_to_terminal(world.starting_room,room_map, master_plan, terminal))
+    traversal_path.extend(compute_path_to_terminal(world.starting_room.id,room_map, master_plan, terminal))
+    
 # compute_path_to_terminals(world.starting_room,room_map, master_plan, terminal_list)
 print("final traversal path", traversal_path)
+print("Rooms visited", rooms_visited)
+while len(master_plan) > len(rooms_visited):
+    unvisited_rooms = set()
+    for _ in range(len(master_plan)):
+        if _ not in rooms_visited:
+            unvisited_rooms.add(_)
+    rand_ = random.randint(0, len(unvisited_rooms)-1)
+    pseudo_terminal = list(unvisited_rooms)[rand_]
+    print("pseudo terminal", pseudo_terminal)
+    # print("unvisited rooms", unvisited_rooms)
+    traversal_path_extension = compute_path_to_terminal(world.starting_room.id, room_map, master_plan, pseudo_terminal)
+    print('traversal path extension', traversal_path_extension)
+    traversal_path.extend(traversal_path_extension)
+
+
 # traversal_path = tuple_return[0]
 # TRAVERSAL TEST
 visited_rooms = set()
