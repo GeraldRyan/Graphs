@@ -1,5 +1,18 @@
 import random
+class Queue():
 
+    def __init__(self):
+        self.queue = []
+    def enqueue(self, value):
+        self.queue.append(value)
+    def dequeue(self):
+        if self.size() >0:
+            return self.queue.pop(0)
+        else:
+            return None
+    def size(self):
+        return len(self.queue)
+        
 class User:
     def __init__(self, name):
         self.name = name
@@ -96,22 +109,46 @@ class SocialGraph:
 
         The key is the friend's ID and the value is the path.
         """
-        visited = {}  # Note that this is a dictionary, not a set
+        visited = set()  # Note that this is a dictionary, not a set
+        result = {}
         # !!!! IMPLEMENT ME
-        extended_friends = set()
-        print("Friendships of ", user_id, " ", self.friendships[user_id])
-        q = []
-        q.append(user_id)
-        while len(q) > 0:
-            path = set()
-            v = q.pop(0)
-            print('v for popped', v, self.friendships[v])
-            for friend in self.friendships[user_id]:
-                print('friend', friend)
-                if v not in visited:
-                    visited[v] = True
-                    q.append(friend)
-                    extended_friends.add(friend)
+        q = Queue()
+        q.enqueue([user_id])
+
+        while q.size() > 0:
+            path = q.dequeue()
+            u = path[-1]
+
+            if u not in visited:
+                visited.add(u)
+                result[u] = path
+
+                for neighbor in self.friendships[u]:
+                    path_copy = list(path)
+                    path_copy.append(neighbor)
+                    q.enqueue(path_copy)
+
+
+
+        return result
+
+
+
+        # Old attempt:::
+        # extended_friends = set()
+        # print("Friendships of ", user_id, " ", self.friendships[user_id])
+        # q = []
+        # q.append(user_id)
+        # while len(q) > 0:
+        #     path = set()
+        #     v = q.pop(0)
+        #     print('v for popped', v, self.friendships[v])
+        #     for friend in self.friendships[user_id]:
+        #         print('friend', friend)
+        #         if v not in visited:
+        #             visited[v] = True
+        #             q.append(friend)
+        #             extended_friends.add(friend)
 
 
 
