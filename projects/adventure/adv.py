@@ -6,6 +6,7 @@ from util import Stack, Queue
 import random
 from ast import literal_eval
 
+
 def translate(dir):
     if dir == "s":
         return "n"
@@ -17,6 +18,12 @@ def translate(dir):
         return 'e'
     else:
         return
+
+def reverse_direction(array):
+    new_array = []
+    for item in array:
+        new_array.append(translate(item))
+    return new_array
 
 def print_q_ids(q):
     q_ids = []
@@ -68,6 +75,10 @@ def compute_path_to_terminal(starting_vertex, map, master_plan, terminal):
                 directions_by_compass.append(direction) # [].append('w')
                 current_room = next_room
                 break
+    ruckwarts = reverse_direction(reversed(directions_by_compass))
+    traversal_path = directions_by_compass
+    traversal_path.extend(reverse_direction(directions_by_compass))
+    print("directions by compass", directions_by_compass, "to room ", terminal)    
 
     print("directions by compass", directions_by_compass, "to room ", terminal)
     return traversal_path
@@ -87,10 +98,8 @@ def compute_path_to_terminals(starting_vertex, map, master_plan, terminal_list):
                     directions_by_compass.append(direction) # [].append('w')
                     current_room = next_room
                     break
-            print("Directions by compass" , directions_by_compass)
-            for _ in reversed(directions_by_compass):
-                print("i am reversed", _)
-
+        print("Directions by compass" , directions_by_compass)
+        ruckwarts = reverse_direction(reversed(directions_by_compass))
         print("directions by compass", directions_by_compass, "to room ", terminal)
     return traversal_path
 
@@ -211,12 +220,12 @@ print("Traversal Path (Incorrect):", tuple_return[0])
 print("Visited:", tuple_return[1])
 print("Master Plan:", tuple_return[2])
 print("Terminal List:", tuple_return[3])
+traversal_path = []
+for terminal in terminal_list:
+    traversal_path.extend(compute_path_to_terminal(world.starting_room,room_map, master_plan, terminal))
+# compute_path_to_terminals(world.starting_room,room_map, master_plan, terminal_list)
 
-# for terminal in terminal_list:
-#     compute_path_to_terminals(world.starting_room,room_map, master_plan, terminal)
-compute_path_to_terminals(world.starting_room,room_map, master_plan, terminal_list)
-
-traversal_path = tuple_return[0]
+# traversal_path = tuple_return[0]
 # TRAVERSAL TEST
 visited_rooms = set()
 player.current_room = world.starting_room
