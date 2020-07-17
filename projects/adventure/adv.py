@@ -224,7 +224,7 @@ traversal_path = []
 for terminal in terminal_list:
     traversal_path.extend(compute_path_to_terminal(world.starting_room,room_map, master_plan, terminal))
 # compute_path_to_terminals(world.starting_room,room_map, master_plan, terminal_list)
-
+print("final traversal path", traversal_path)
 # traversal_path = tuple_return[0]
 # TRAVERSAL TEST
 visited_rooms = set()
