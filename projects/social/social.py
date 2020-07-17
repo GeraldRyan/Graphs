@@ -6,6 +6,9 @@ class User:
 
 class SocialGraph:
     def __init__(self):
+        self.reset()
+
+    def reset(self):
         self.last_id = 0
         self.users = {}
         self.friendships = {}
@@ -15,12 +18,15 @@ class SocialGraph:
         Creates a bi-directional friendship
         """
         if user_id == friend_id:
-            print("WARNING: You cannot be friends with yourself")
+            # print("WARNING: You cannot be friends with yourself")
+            return False
         elif friend_id in self.friendships[user_id] or user_id in self.friendships[friend_id]:
-            print("WARNING: Friendship already exists")
+            # print("WARNING: Friendship already exists")
+            return False
         else:
             self.friendships[user_id].add(friend_id)
             self.friendships[friend_id].add(user_id)
+            return True
 
     def add_user(self, name):
         """
@@ -65,6 +71,22 @@ class SocialGraph:
             self.add_friendship(friendship[0], friendship[1])
 
 
+    def populate_graph_ii(self, num_users, avg_friendships):
+        self.reset()
+        for i in range(num_users):
+            self.add_user(f'user: {i+1}')
+        
+        target_friendships = num_users * avg_friendships
+        total_friendships = 0
+
+        while total_friendships < target_friendships:
+            user_id = random.randint(1, self.last_id)
+            friend_id = random.randint(1, self.last_id)
+
+            if self.add_friendship(user_id, friend_id):
+                total_friendships +=2
+
+
     def get_all_social_paths(self, user_id):
         """
         Takes a user's user_id as an argument
@@ -76,12 +98,31 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+        extended_friends = set()
+        print("Friendships of ", user_id, " ", self.friendships[user_id])
+        q = []
+        q.append(user_id)
+        while len(q) > 0:
+            path = set()
+            v = q.pop(0)
+            print('v for popped', v, self.friendships[v])
+            for friend in self.friendships[user_id]:
+                print('friend', friend)
+                if v not in visited:
+                    visited[v] = True
+                    q.append(friend)
+                    extended_friends.add(friend)
+
+
+
+
+        print("all friends", extended_friends)
         return visited
 
 
 if __name__ == '__main__':
     sg = SocialGraph()
-    sg.populate_graph(10, 2)
+    sg.populate_graph_ii(10, 2)
     print(sg.friendships)
     connections = sg.get_all_social_paths(1)
     print(connections)
