@@ -87,6 +87,7 @@ def compute_path_to_terminals(starting_vertex, map, master_plan, terminal_list):
                     directions_by_compass.append(direction) # [].append('w')
                     current_room = next_room
                     break
+            print("Directions by compass" , directions_by_compass)
             for _ in reversed(directions_by_compass):
                 print("i am reversed", _)
 
