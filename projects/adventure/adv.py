@@ -71,7 +71,7 @@ def compute_path_to_terminal(starting_vertex, map, master_plan, terminal):
     directions_by_room = map[terminal]
     directions_by_compass = []
     add_to_visited(current_room)
-    print(f"Directions by room to {terminal}", directions_by_room)
+    # print(f"Directions by room to {terminal}", directions_by_room)
     for next_room in directions_by_room[1:]: # ex 7 8
         add_to_visited(next_room) 
         for direction in master_plan[current_room]: # for n/s/e/w in {... 0: {'n': 1, 's': 5, 'w': 7, 'e': 3} ...}
@@ -81,9 +81,9 @@ def compute_path_to_terminal(starting_vertex, map, master_plan, terminal):
                 current_room = next_room
                 break
     # ruckwarts = reverse_direction(reversed(directions_by_compass))
-    print(f"directions by compass to {terminal}", directions_by_compass)
+    # print(f"directions by compass to {terminal}", directions_by_compass)
     traversal_path = directions_by_compass
-    print("Traversal path bit", traversal_path)
+    # print("Traversal path bit", traversal_path)
     traversal_path.extend(reverse_direction(reversed(directions_by_compass)))
     # print("directions by compass", directions_by_compass, "to room ", terminal)    
     return traversal_path
