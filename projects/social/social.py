@@ -109,8 +109,7 @@ class SocialGraph:
 
         The key is the friend's ID and the value is the path.
         """
-        visited = set()  # Note that this is a dictionary, not a set
-        result = {}
+        visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
         q = Queue()
         q.enqueue([user_id])
@@ -120,8 +119,7 @@ class SocialGraph:
             u = path[-1]
 
             if u not in visited:
-                visited.add(u)
-                result[u] = path
+                visited[u] = path
 
                 for neighbor in self.friendships[u]:
                     path_copy = list(path)
@@ -130,7 +128,7 @@ class SocialGraph:
 
 
 
-        return result
+        return visited
 
 
 
