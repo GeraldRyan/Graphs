@@ -38,9 +38,9 @@ rooms_visited = set()
 # You may uncomment the smaller graphs for development and testing purposes.
 # map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
-# map_file = "maps/test_loop.txt"
+map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
-map_file = "maps/main_maze.txt"
+# map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
@@ -151,9 +151,9 @@ def run():
     # You may uncomment the smaller graphs for development and testing purposes.
     # map_file = "maps/test_line.txt"
     # map_file = "maps/test_cross.txt"
-    # map_file = "maps/test_loop.txt"
+    map_file = "maps/test_loop.txt"
     # map_file = "maps/test_loop_fork.txt"
-    map_file = "maps/main_maze.txt"
+    # map_file = "maps/main_maze.txt"
 
     # Loads the map into a dictionary
     room_graph=literal_eval(open(map_file, "r").read())
@@ -173,17 +173,17 @@ def run():
     room_map = tuple_return[1]
     master_plan = tuple_return[2]
     terminal_list= list(tuple_return[3])
-    # print("Traversal Path (Incorrect):", tuple_return[0])
-    # print("Visited:", tuple_return[1])
-    # print("Master Plan:", tuple_return[2])
-    # print("Terminal List:", tuple_return[3])
+    print("Traversal Path (Incorrect):", tuple_return[0])
+    print("Visited:", tuple_return[1])
+    print("Master Plan:", tuple_return[2])
+    print("Terminal List:", tuple_return[3])
     traversal_path = []
     for terminal in terminal_list:
         traversal_path.extend(compute_path_to_terminal(world.starting_room.id,room_map, master_plan, terminal, rooms_visited))
         
     # compute_path_to_terminals(world.starting_room,room_map, master_plan, terminal_list)
-    print("final traversal path", traversal_path)
-    print("Rooms visited", rooms_visited)
+    # print("final traversal path", traversal_path)
+    # print("Rooms visited", rooms_visited)
     while len(master_plan) > len(rooms_visited):
         unvisited_rooms = set()
         for _ in range(len(master_plan)):
@@ -207,6 +207,12 @@ def run():
 #     traversal_path = run()
 traversal_path = run()
 
+def filter_traversal_path_for_redundancies(path):
+    chunks = {}
+    print("path to be filtered", path)
+    return path
+
+filter_traversal_path_for_redundancies(traversal_path)
 # traversal_path = tuple_return[0]
 # TRAVERSAL TEST
 visited_rooms = set()

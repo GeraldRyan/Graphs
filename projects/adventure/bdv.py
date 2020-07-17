@@ -7,7 +7,6 @@ import random
 import random
 from ast import literal_eval
 
-visited_rooms = set()
 
 def translate(dir):
     if dir == "s":
@@ -62,7 +61,8 @@ player = Player(world.starting_room)
 # traversal_path = ['n', 'n', 'n']
 traversal_path = []
 master_plan = {}
-
+visited_rooms = set()
+visited_rooms.add(world.starting_room)
     
 def dfrandom(starting_vertex=world.starting_room):
     dftravel_path = []
@@ -74,12 +74,17 @@ def dfrandom(starting_vertex=world.starting_room):
         v = s.pop()
         exits = v.get_exits()
         print('exits', exits)
-        while len(exits) > 1:
-
+        if len(exits) != 1:
             if v not in visited:
                 visited.add(v)
                 new_room = v.get_room_in_direction(decode(random.randint(1, len(exits))))
                 print('new room', new_room.id)
+                exits = new_room.get_exits()
+                s.push(new_room)
+                print('exits', exits)
+        else: 
+            
+        
     
     return dftravel_path
 
