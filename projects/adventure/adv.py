@@ -96,9 +96,7 @@ def bft(starting_vertex):
                 for exit in next_room.get_exits():
                     master_plan[next_room.id][exit] = '?'
             
-            master_plan[next_room.id][translate(direction)] = v_obj.id
-            
-            print("master plan coming together", master_plan)
+            master_plan[next_room.id][translate(direction)] = v_obj.id; print("master plan coming together", master_plan)
             q.append(next_room)
             traversal_path.append(direction)
     print("final rooms visited", visited)
