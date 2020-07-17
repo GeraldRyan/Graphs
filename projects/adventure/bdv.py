@@ -1,7 +1,8 @@
 from room import Room
 from player import Player
 from world import World
-from util import Stack, Queue  
+from util import Stack, Queue
+import random
 
 import random
 from ast import literal_eval
@@ -24,6 +25,16 @@ def reverse_direction(array):
     for item in array:
         new_array.append(translate(item))
     return new_array
+
+def decode(tiny_int):
+    if tiny_int == 1:
+        return 'n'
+    elif tiny_int ==2:
+        return 'e'
+    elif tiny_int == 3:
+        return 's'
+    elif tiny_int ==4:
+        return 'w'
 
 def print_q_ids(q):
     q_ids = []
@@ -85,70 +96,22 @@ def compute_path_to_terminal(starting_vertex, map, master_plan, terminal):
 
 
 
-def bfts(starting_vertex):   # Breadth first traversal-search
-
-    visited = {} 
-    # !!!! IMPLEMENT ME
-    q = Queue()
-    traversal_path = []
-    q.enqueue([starting_vertex])
+def dfrandom(starting_vertex):   # depth first random
     master_plan[starting_vertex.id] = {}
     for exit in starting_vertex.get_exits():
         master_plan[starting_vertex.id][exit] = '?'
-    print("master plan:", master_plan)
-    terminals = set()
-
-    while q.size() > 0:
-        path = q.dequeue()
-        v_obj = path[-1]
-        if v_obj.id not in master_plan:
-            master_plan[v_obj.id] = {}
-            for exit in v_obj.get_exits():
-                master_plan[v_obj.id][exit] = '?'
+    print("master plan:", master_plan)    
+    rand_dir = decode(random.randint(1,4))
+    print("random dir", rand_dir)
         
-        if v_obj.id not in visited:
-            path_ids = []
-            returning = False
-            for _ in path:
-                path_ids.append(_.id)
-            visited[v_obj.id] = path_ids
-            for direction in v_obj.get_exits():
-                if len(v_obj.get_exits()) == 1: # Base case of terminus
-                    terminals.add(v_obj.id) # Rooms that are end of the line
-
-                # Need an algorithm for identifying loops and wlaking them once
-                path_copy = list(path)
-                next_room = v_obj.get_room_in_direction(direction)
-                traversal_path.append(direction)
-                path_copy.append(next_room)
-                q.enqueue(path_copy)
-
-                master_plan[v_obj.id][direction] = next_room.id
-                if next_room.id not in master_plan:
-                    master_plan[next_room.id] = {}
-                    for exit in next_room.get_exits():
-                        master_plan[next_room.id][exit] = '?'
-                
-                master_plan[next_room.id][translate(direction)] = v_obj.id
-                # print("master plan coming together", master_plan)
-
-    # print("Visited",visited)
-    tuple_return = (traversal_path, visited, master_plan, terminals)
-    print("Terminal Rooms", terminals)
-    return tuple_return
 
 
-tuple_return = bfts(world.starting_room)
-room_map = tuple_return[1]
-master_plan = tuple_return[2]
-terminal_list= list(tuple_return[3])
-print("Traversal Path (Incorrect):", tuple_return[0])
-print("Visited:", tuple_return[1])
-print("Master Plan:", tuple_return[2])
-print("Terminal List:", tuple_return[3])
+    
+dfrandom(world.starting_room)
+
 traversal_path = []
-for terminal in terminal_list:
-    traversal_path.extend(compute_path_to_terminal(world.starting_room,room_map, master_plan, terminal))
+# for terminal in terminal_list:
+#     traversal_path.extend(compute_path_to_terminal(world.starting_room,room_map, master_plan, terminal))
 # compute_path_to_terminals(world.starting_room,room_map, master_plan, terminal_list)
 print("final traversal path", traversal_path)
 # traversal_path = tuple_return[0]
