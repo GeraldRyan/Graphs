@@ -172,8 +172,9 @@ while len(master_plan) > len(rooms_visited):
     traversal_path.extend(traversal_path_extension)
 
 grid = [0,0]
-set_of_indices = set()
+set_of_indices = []
 for index, unit in enumerate(traversal_path):
+    # print('index, unit', index, unit)
     if unit == 'e':
         grid[0] += 1
     elif unit == 'w':
@@ -183,8 +184,17 @@ for index, unit in enumerate(traversal_path):
     elif unit == 's':
         grid[1] -= 1
     if grid == [0,0]:
-        set_of_indices.add(index)
+        set_of_indices.append(index+1)
 print('set of indices', set_of_indices, len(set_of_indices))
+prior_index = 0
+path_of_paths = []
+for i,index in enumerate(set_of_indices):
+    print("i", i, "index", index)
+    print('traversal path[prior_index:index', traversal_path[prior_index:index])
+    path_of_paths[i] = traversal_path[prior_index:index]
+    prior_index = index
+print("Path of paths", path_of_paths)
+
 
 
 
