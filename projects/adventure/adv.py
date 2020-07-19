@@ -38,9 +38,9 @@ rooms_visited = set()
 # You may uncomment the smaller graphs for development and testing purposes.
 # map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
-map_file = "maps/test_loop.txt"
+# map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
-# map_file = "maps/main_maze.txt"
+map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
@@ -61,19 +61,19 @@ def back_peddle(room, master_plan):
     if room.id in master_plan:
         print(room.id)
 
-def add_to_visited(rooms_visited, room_id):
+def add_to_visited(room_id):
     rooms_visited.add(room_id)
 
-def compute_path_to_terminal(starting_vertex, map, master_plan, terminal, rooms_visited):
+def compute_path_to_terminal(starting_vertex, map, master_plan, terminal):
     # print("Current Room", current_room)
     traversal_path = []
     current_room = starting_vertex
     directions_by_room = map[terminal]
     directions_by_compass = []
-    add_to_visited(rooms_visited, current_room)
+    add_to_visited(current_room)
     # print(f"Directions by room to {terminal}", directions_by_room)
     for next_room in directions_by_room[1:]: # ex 7 8
-        add_to_visited(rooms_visited, next_room) 
+        add_to_visited(next_room) 
         for direction in master_plan[current_room]: # for n/s/e/w in {... 0: {'n': 1, 's': 5, 'w': 7, 'e': 3} ...}
             # print("current room", current_room,'next room', next_room,  "master plan[curent room]", master_plan[current_room], "Direction", direction)
             if master_plan[current_room][direction] == next_room: # if master_plan[0]['w'] == 7
@@ -142,77 +142,55 @@ def bfts(starting_vertex):   # Breadth first traversal-search
     print("Terminal Rooms", terminals)
     return tuple_return
 
-def run():
 
-        # Load world
-    world = World()
-
+tuple_return = bfts(world.starting_room)
+room_map = tuple_return[1]
+master_plan = tuple_return[2]
+terminal_list= list(tuple_return[3])
+print("Traversal Path (Incorrect):", tuple_return[0])
+print("Visited:", tuple_return[1])
+print("Master Plan:", tuple_return[2])
+print("Terminal List:", tuple_return[3])
+traversal_path = []
+for terminal in terminal_list:
+    traversal_path.extend(compute_path_to_terminal(world.starting_room.id,room_map, master_plan, terminal))
+    
+# compute_path_to_terminals(world.starting_room,room_map, master_plan, terminal_list)
+print("final traversal path", traversal_path)
+print("Rooms visited", rooms_visited)
+while len(master_plan) > len(rooms_visited):
     unvisited_rooms = set()
-    # You may uncomment the smaller graphs for development and testing purposes.
-    # map_file = "maps/test_line.txt"
-    # map_file = "maps/test_cross.txt"
-    map_file = "maps/test_loop.txt"
-    # map_file = "maps/test_loop_fork.txt"
-    # map_file = "maps/main_maze.txt"
+    for _ in range(len(master_plan)):
+        if _ not in rooms_visited:
+            unvisited_rooms.add(_)
+    rand_ = random.randint(0, len(unvisited_rooms)-1)
+    pseudo_terminal = list(unvisited_rooms)[rand_]
+    print("pseudo terminal", pseudo_terminal)
+    # print("unvisited rooms", unvisited_rooms)
+    traversal_path_extension = compute_path_to_terminal(world.starting_room.id, room_map, master_plan, pseudo_terminal)
+    print('traversal path extension', traversal_path_extension)
+    traversal_path.extend(traversal_path_extension)
 
-    # Loads the map into a dictionary
-    room_graph=literal_eval(open(map_file, "r").read())
-    world.load_graph(room_graph)
-
-    # Print an ASCII map
-    world.print_rooms()
-
-    player = Player(world.starting_room)
-    # print('starting room---', world.starting_room)
-
-    # Fill this out with directions to walk
-    # traversal_path = ['n', 'n', 'n']
-    traversal_path = []
-    master_plan = {}
-    tuple_return = bfts(world.starting_room)
-    room_map = tuple_return[1]
-    master_plan = tuple_return[2]
-    terminal_list= list(tuple_return[3])
-    print("Traversal Path (Incorrect):", tuple_return[0])
-    print("Visited:", tuple_return[1])
-    print("Master Plan:", tuple_return[2])
-    print("Terminal List:", tuple_return[3])
-    traversal_path = []
-    for terminal in terminal_list:
-        traversal_path.extend(compute_path_to_terminal(world.starting_room.id,room_map, master_plan, terminal, rooms_visited))
-        
-    # compute_path_to_terminals(world.starting_room,room_map, master_plan, terminal_list)
-    # print("final traversal path", traversal_path)
-    # print("Rooms visited", rooms_visited)
-    while len(master_plan) > len(rooms_visited):
-        unvisited_rooms = set()
-        for _ in range(len(master_plan)):
-            # print('_', _)
-            if _ not in rooms_visited:
-                unvisited_rooms.add(_)
-        rand_ = random.randint(0, len(unvisited_rooms)-1)
-        pseudo_terminal = list(unvisited_rooms)[rand_]
-        # print('unvisited rooms', unvisited_rooms)
-        # print('pseudo terminal', pseudo_terminal)
-        # print("pseudo terminal", pseudo_terminal)
-        # print("unvisited rooms", unvisited_rooms)
-        traversal_path_extension = compute_path_to_terminal(world.starting_room.id, room_map, master_plan, pseudo_terminal, rooms_visited)
-        # print('traversal path extension', traversal_path_extension)
-        traversal_path.extend(traversal_path_extension)
-    print(len(traversal_path))
-    return traversal_path
+grid = [0,0]
+set_of_indices = set()
+for index, unit in enumerate(traversal_path):
+    if unit == 'e':
+        grid[0] += 1
+    elif unit == 'w':
+        grid[0] -= 1
+    elif unit == 'n':
+        grid[1] += 1
+    elif unit == 's':
+        grid[1] -= 1
+    if grid == [0,0]:
+        set_of_indices.add(index)
+print('set of indices', set_of_indices, len(set_of_indices))
 
 
-# while len(traversal_path) < 10 or len(traversal_path) > 4000:
-#     traversal_path = run()
-traversal_path = run()
 
-def filter_traversal_path_for_redundancies(path):
-    chunks = {}
-    print("path to be filtered", path)
-    return path
 
-filter_traversal_path_for_redundancies(traversal_path)
+
+
 # traversal_path = tuple_return[0]
 # TRAVERSAL TEST
 visited_rooms = set()
