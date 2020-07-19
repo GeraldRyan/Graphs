@@ -71,11 +71,9 @@ player = Player(world.starting_room)
 # traversal_path = ['n', 'n', 'n']
 traversal_path = []
 master_plan = {}
-directions_to_room_x = {} # Do we need this now?
+directions_to_room_x = {}
 visited_rooms = set()
 visited_rooms.add(world.starting_room)
-current_room = world.starting_room
-df_room_traversal_path = []
 
 # Start by writing an algorithm that picks a random unexplored direction from the player's current room, travels and logs that direction, then loops. This should cause your player to walk a depth-first traversal. When you reach a dead-end (i.e. a room with no unexplored paths), walk back to the nearest room that does contain an unexplored path.
 
@@ -86,6 +84,9 @@ df_room_traversal_path = []
 # 2. BFS will return the path as a list of room IDs. You will need to convert this to a list of n/s/e/w directions before you can add it to your traversal path.
 
 # If all paths have been explored, you're done!
+
+class Finder():
+  def __init__(self):
 
 
 def draw_master_plan(v, dir=None, new_room=None):
@@ -106,6 +107,7 @@ def dfrandom(starting_vertex=world.starting_room):
     s = Stack()
     s.push(starting_vertex)
     visited = set()
+    df_room_traversal_path = []
     df_dir_traversal_path = []
 
     while s.size() > 0:
@@ -114,26 +116,26 @@ def dfrandom(starting_vertex=world.starting_room):
             visited.add(v)
             draw_master_plan(v)
             exits = v.get_exits()
-            df_room_traversal_path.append(v.id)
-            # print('all exits', exits)
+            print("109 master plan so far", master_plan)
+            print('all exits', exits)
             if len(exits) == 1 and v.id !=0: # if it's a terminal room but not the beginning
+                df_room_traversal_path.append(v.id)
+                print("depth first room traversal path", df_room_traversal_path)
                 return df_dir_traversal_path
             # take away the mirror of the exit so that if they just went north, then south is out of the list
             if 'random_exit' in locals():
                 exits.remove(mirror(random_exit))
-            # print('allowed exits', exits)
+            print('allowed exits', exits)
             random_exit = random.choice(exits)
+            df_dir_traversal_path.append(random_exit)
             new_room = v.get_room_in_direction(random_exit)
-            if new_room.id != 0:
-                df_dir_traversal_path.append(random_exit)
             print('new room, looking for zero', new_room.id)
             draw_master_plan(v, random_exit, new_room)
             s.push(new_room)
-            current_room = v # hoist new room to global scope
+            df_room_traversal_path.append(v.id)       
             if new_room.id == 0:
                 draw_master_plan(v, random_exit, new_room)
                 print("master plan finished", master_plan)
-                return df_dir_traversal_path
     print("depth first room traversal path", df_room_traversal_path)
 
     return df_dir_traversal_path
@@ -141,9 +143,6 @@ def dfrandom(starting_vertex=world.starting_room):
 
 traversal_path = dfrandom()
 print("depth first direction traversal path", traversal_path)
-print("depth first room traversal path", df_room_traversal_path)
-
-print("Current Room:", current_room, "master Plan:", master_plan)
 
 
 
