@@ -99,7 +99,8 @@ def dfrandom(starting_vertex=world.starting_room):
             exits = v.get_exits() 
             print('all exits', exits)
             if len(exits) == 1 and v.id !=0: # if it's a terminal room but not the beginning
-                df_room_traversal_path.append(v.id)        
+                df_room_traversal_path.append(v.id)
+                print("depth first room traversal path", df_room_traversal_path)
                 return df_dir_traversal_path
             # take away the mirror of the exit so that if they just went north, then south is out of the list
             if 'random_exit' in locals():
@@ -111,7 +112,6 @@ def dfrandom(starting_vertex=world.starting_room):
             print('new room', new_room.id)
             s.push(new_room)
             df_room_traversal_path.append(v.id)        
-    print("depth first room traversal path", df_room_traversal_path)
     print("depth first direction traversal path", df_dir_traversal_path)
 
     return df_dir_traversal_path
