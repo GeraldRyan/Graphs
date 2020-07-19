@@ -201,10 +201,14 @@ halved_path_of_paths = []
 
 for index, path in enumerate(path_of_paths):
     halved_path_of_paths.append(path[:int(len(path)/2)])
-    print("Path of paths", path)
-    print("halved version", halved_path_of_paths[index])
-
-
+    # print("Path of paths", path)
+    # print("halved version", halved_path_of_paths[index])
+print("Halved path of paths", halved_path_of_paths)
+# for index, path in enumerate(halved_path_of_paths):
+#     for index2, path2 in enumerate(halved_path_of_paths):
+#         if index != index2:
+#             for item in path:
+#                 if 
 
 
 
