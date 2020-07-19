@@ -147,17 +147,17 @@ tuple_return = bfts(world.starting_room)
 room_map = tuple_return[1]
 master_plan = tuple_return[2]
 terminal_list= list(tuple_return[3])
-print("Traversal Path (Incorrect):", tuple_return[0])
-print("Visited:", tuple_return[1])
-print("Master Plan:", tuple_return[2])
-print("Terminal List:", tuple_return[3])
+# print("Traversal Path (Incorrect):", tuple_return[0])
+# print("Visited:", tuple_return[1])
+# print("Master Plan:", tuple_return[2])
+# print("Terminal List:", tuple_return[3])
 traversal_path = []
 for terminal in terminal_list:
     traversal_path.extend(compute_path_to_terminal(world.starting_room.id,room_map, master_plan, terminal))
     
 # compute_path_to_terminals(world.starting_room,room_map, master_plan, terminal_list)
-print("final traversal path", traversal_path)
-print("Rooms visited", rooms_visited)
+# print("final traversal path", traversal_path)
+# print("Rooms visited", rooms_visited)
 while len(master_plan) > len(rooms_visited):
     unvisited_rooms = set()
     for _ in range(len(master_plan)):
@@ -165,10 +165,10 @@ while len(master_plan) > len(rooms_visited):
             unvisited_rooms.add(_)
     rand_ = random.randint(0, len(unvisited_rooms)-1)
     pseudo_terminal = list(unvisited_rooms)[rand_]
-    print("pseudo terminal", pseudo_terminal)
+    # print("pseudo terminal", pseudo_terminal)
     # print("unvisited rooms", unvisited_rooms)
     traversal_path_extension = compute_path_to_terminal(world.starting_room.id, room_map, master_plan, pseudo_terminal)
-    print('traversal path extension', traversal_path_extension)
+    # print('traversal path extension', traversal_path_extension)
     traversal_path.extend(traversal_path_extension)
 
 grid = [0,0]
@@ -185,17 +185,24 @@ for index, unit in enumerate(traversal_path):
         grid[1] -= 1
     if grid == [0,0]:
         set_of_indices.append(index+1)
-print('set of indices', set_of_indices, len(set_of_indices))
+# print('set of indices', set_of_indices, len(set_of_indices))
 prior_index = 0
 path_of_paths = []
 for i,index in enumerate(set_of_indices):
-    print("i", i, "index", index)
-    print('traversal path[prior_index:index', traversal_path[prior_index:index])
-    path_of_paths[i] = traversal_path[prior_index:index]
+    # print("i", i, "index", index)
+    # print('traversal path[prior_index:index', traversal_path[prior_index:index])
+    path_of_paths.append(traversal_path[prior_index:index])
     prior_index = index
-print("Path of paths", path_of_paths)
 
+# Got a list of lists made of all the paths that go from origin to origin. THat is huge. Now I have to see if the first half of each one is redundant- a subset of another path. 
+# print("Path of paths before halved path", path_of_paths)
+halved_path_of_paths = []
+# print("Path of paths before halved path", path_of_paths)
 
+for index, path in enumerate(path_of_paths):
+    halved_path_of_paths.append(path[:int(len(path)/2)])
+    print("Path of paths", path)
+    print("halved version", halved_path_of_paths[index])
 
 
 
