@@ -1,7 +1,7 @@
 from room import Room
 from player import Player
 from world import World
-from util import Stack, Queue  
+from util import Stack, Queue, removeElements, rK
 
 import random
 from ast import literal_eval
@@ -170,6 +170,7 @@ while len(master_plan) > len(rooms_visited):
     traversal_path_extension = compute_path_to_terminal(world.starting_room.id, room_map, master_plan, pseudo_terminal)
     # print('traversal path extension', traversal_path_extension)
     traversal_path.extend(traversal_path_extension)
+print("Traversal path", traversal_path, len(traversal_path))
 
 grid = [0,0]
 set_of_indices = []
@@ -203,15 +204,33 @@ for index, path in enumerate(path_of_paths):
     halved_path_of_paths.append(path[:int(len(path)/2)])
     # print("Path of paths", path)
     # print("halved version", halved_path_of_paths[index])
-print("Halved path of paths", halved_path_of_paths)
-# for index, path in enumerate(halved_path_of_paths):
-#     for index2, path2 in enumerate(halved_path_of_paths):
-#         if index != index2:
-#             for item in path:
-#                 if 
+# print("Halved path of paths", halved_path_of_paths)
+count = 0
+d=10
+indices_to_delete = []
+for index, path in enumerate(halved_path_of_paths):
+    for index2, path2 in enumerate(halved_path_of_paths):
+        if index != index2 and len(path) < len(path2):
+            if rK(path, path2):
+                count +=1
+                # print("index, index2, path, path2", index, index2, path, path2)
+                indices_to_delete.append(index)
+print("count", count)
+for _ in indices_to_delete:
+    print("deleting the following", path_of_paths[_], len(path_of_paths[_]), " long")
+    path_of_paths[_] = None
 
-
-
+# print("Path of paths Noned", path_of_paths)
+for i,_ in enumerate(path_of_paths):
+    if _ == None:
+        del path_of_paths[i]
+        print("None deleted")
+# print("Path of paths Noned", path_of_paths)
+traversal_path = []
+for _ in path_of_paths:
+    for __ in _:
+        traversal_path.append(__) 
+print("Traversal path", traversal_path, len(traversal_path))
 # traversal_path = tuple_return[0]
 # TRAVERSAL TEST
 visited_rooms = set()

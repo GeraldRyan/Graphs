@@ -41,9 +41,9 @@ world = World()
 
 
 # You may uncomment the smaller graphs for development and testing purposes.
-# map_file = "maps/test_line.txt"
+map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
-map_file = "maps/test_loop.txt"
+# map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
 # map_file = "maps/main_maze.txt"
 
@@ -63,8 +63,24 @@ traversal_path = []
 master_plan = {}
 visited_rooms = set()
 visited_rooms.add(world.starting_room)
+
+# Start by writing an algorithm that picks a random unexplored direction from the player's current room, travels and logs that direction, then loops. This should cause your player to walk a depth-first traversal. When you reach a dead-end (i.e. a room with no unexplored paths), walk back to the nearest room that does contain an unexplored path.
+
+# You can find the path to the shortest unexplored room by using a breadth-first search for a room with a `'?'` for an exit. If you use the `bfs` code from the homework, you will need to make a few modifications.
+
+# 1. Instead of searching for a target vertex, you are searching for an exit with a `'?'` as the value. If an exit has been explored, you can put it in your BFS queue like normal.
+
+# 2. BFS will return the path as a list of room IDs. You will need to convert this to a list of n/s/e/w directions before you can add it to your traversal path.
+
+# If all paths have been explored, you're done!
+
     
 def dfrandom(starting_vertex=world.starting_room):
+    exits = starting_vertex.get_exits()
+    print('80 exits:', exits)
+    random_room = random.choice(exits)
+    print("Random choice room", random_room)
+
     dftravel_path = []
     rand_room = random.randint(1, len(room_graph))
     s = Stack()
@@ -82,7 +98,7 @@ def dfrandom(starting_vertex=world.starting_room):
                 exits = new_room.get_exits()
                 s.push(new_room)
                 print('exits', exits)
-        else: 
+        # else: 
             
         
     
