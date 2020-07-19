@@ -52,8 +52,8 @@ world = World()
 
 # You may uncomment the smaller graphs for development and testing purposes.
 map_file = "maps/test_line.txt"
-# map_file = "maps/test_cross.txt"
-# map_file = "maps/test_loop.txt"
+map_file = "maps/test_cross.txt"
+map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
 # map_file = "maps/main_maze.txt"
 
@@ -71,6 +71,7 @@ player = Player(world.starting_room)
 # traversal_path = ['n', 'n', 'n']
 traversal_path = []
 master_plan = {}
+directions_to_room_x = {}
 visited_rooms = set()
 visited_rooms.add(world.starting_room)
 
@@ -84,6 +85,20 @@ visited_rooms.add(world.starting_room)
 
 # If all paths have been explored, you're done!
 
+
+def draw_master_plan(v, dir=None, new_room=None):
+    if v.id not in master_plan:
+        exits = v.get_exits() 
+        master_plan[v.id] = {}
+        for exit in exits:
+            master_plan[v.id][exit] = "?"
+    elif dir is not None and new_room is not None:
+        master_plan[v.id][dir] = new_room.id
+        try:
+            master_plan[new_room.id][mirror(dir)] = v.id
+        except:
+            master_plan[new_room.id] = {}
+            master_plan[new_room.id][mirror(dir)] = v.id
     
 def dfrandom(starting_vertex=world.starting_room):
     s = Stack()
@@ -96,7 +111,9 @@ def dfrandom(starting_vertex=world.starting_room):
         v = s.pop()
         if v not in visited:
             visited.add(v)
-            exits = v.get_exits() 
+            draw_master_plan(v)
+            exits = v.get_exits()
+            print("109 master plan so far", master_plan)
             print('all exits', exits)
             if len(exits) == 1 and v.id !=0: # if it's a terminal room but not the beginning
                 df_room_traversal_path.append(v.id)
@@ -109,10 +126,14 @@ def dfrandom(starting_vertex=world.starting_room):
             random_exit = random.choice(exits)
             df_dir_traversal_path.append(random_exit)
             new_room = v.get_room_in_direction(random_exit)
-            print('new room', new_room.id)
+            print('new room, looking for zero', new_room.id)
+            draw_master_plan(v, random_exit, new_room)
             s.push(new_room)
-            df_room_traversal_path.append(v.id)        
-    print("depth first direction traversal path", df_dir_traversal_path)
+            df_room_traversal_path.append(v.id)       
+            if new_room.id == 0:
+                draw_master_plan(v, random_exit, new_room)
+                print("master plan finished", master_plan)
+    print("depth first room traversal path", df_room_traversal_path)
 
     return df_dir_traversal_path
 
