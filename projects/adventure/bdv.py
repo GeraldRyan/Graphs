@@ -35,7 +35,17 @@ def decode(tiny_int):
         return 's'
     elif tiny_int ==4:
         return 'w'
-
+def mirror(dir):
+    if dir == 's':
+        return 'n'
+    elif dir =='w':
+        return 'e'
+    elif dir == 'n':
+        return 's'
+    elif dir =='e':
+        return 'w'
+    else:
+        return False
 # Load world
 world = World()
 
@@ -76,39 +86,39 @@ visited_rooms.add(world.starting_room)
 
     
 def dfrandom(starting_vertex=world.starting_room):
-    exits = starting_vertex.get_exits()
-    print('80 exits:', exits)
-    random_room = random.choice(exits)
-    print("Random choice room", random_room)
-
-    dftravel_path = []
-    rand_room = random.randint(1, len(room_graph))
     s = Stack()
-    visited = set()
     s.push(starting_vertex)
-    while s.size() >0:
+    visited = set()
+    df_room_traversal_path = []
+    df_dir_traversal_path = []
+
+    while s.size() > 0:
         v = s.pop()
-        exits = v.get_exits()
-        print('exits', exits)
-        if len(exits) != 1:
-            if v not in visited:
-                visited.add(v)
-                new_room = v.get_room_in_direction(decode(random.randint(1, len(exits))))
-                print('new room', new_room.id)
-                exits = new_room.get_exits()
-                s.push(new_room)
-                print('exits', exits)
-        # else: 
-            
-        
-    
-    return dftravel_path
+        if v not in visited:
+            visited.add(v)
+            exits = v.get_exits() 
+            print('all exits', exits)
+            if len(exits) == 1 and v.id !=0: # if it's a terminal room but not the beginning
+                df_room_traversal_path.append(v.id)        
+                return df_dir_traversal_path
+            # take away the mirror of the exit so that if they just went north, then south is out of the list
+            if 'random_exit' in locals():
+                exits.remove(mirror(random_exit))
+            print('allowed exits', exits)
+            random_exit = random.choice(exits)
+            df_dir_traversal_path.append(random_exit)
+            new_room = v.get_room_in_direction(random_exit)
+            print('new room', new_room.id)
+            s.push(new_room)
+            df_room_traversal_path.append(v.id)        
+    print("depth first room traversal path", df_room_traversal_path)
+    print("depth first direction traversal path", df_dir_traversal_path)
 
-df_traversal_path = dfrandom()
+    return df_dir_traversal_path
 
 
-
-
+traversal_path = dfrandom()
+print("depth first direction traversal path", traversal_path)
 
 
 
