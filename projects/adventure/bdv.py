@@ -154,7 +154,7 @@ print("mirror traversal_path[place_on_path]",mirror(traversal_path[place_on_path
 def backtrack():
 
     while '?' not in master_plan[current_room.id].values():
-        prior_room = current_room.get_room_in_direction(traversal_path[place_on_path])
+        prior_room = current_room.get_room_in_direction(mirror(traversal_path[place_on_path]))
         print("While loop running")
     print("While loop just ran")
     print("current room", current_room.id, master_plan[current_room.id].values())
