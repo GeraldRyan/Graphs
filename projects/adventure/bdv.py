@@ -74,7 +74,6 @@ master_plan = {}
 directions_to_room_x = {} # Do we need this now?
 visited_rooms = set()
 visited_rooms.add(world.starting_room)
-current_room = world.starting_room
 df_room_traversal_path = []
 
 # Start by writing an algorithm that picks a random unexplored direction from the player's current room, travels and logs that direction, then loops. This should cause your player to walk a depth-first traversal. When you reach a dead-end (i.e. a room with no unexplored paths), walk back to the nearest room that does contain an unexplored path.
@@ -88,6 +87,7 @@ df_room_traversal_path = []
 # If all paths have been explored, you're done!
 
 
+current_room = world.starting_room
 def draw_master_plan(v, dir=None, new_room=None):
     if v.id not in master_plan:
         exits = v.get_exits() 
@@ -103,6 +103,8 @@ def draw_master_plan(v, dir=None, new_room=None):
             master_plan[new_room.id][mirror(dir)] = v.id
     
 def dfrandom(starting_vertex=world.starting_room):
+    global current_room
+    # might have to make the globals into localsand return them, so I can run this recursively
     s = Stack()
     s.push(starting_vertex)
     visited = set()
@@ -126,10 +128,11 @@ def dfrandom(starting_vertex=world.starting_room):
             new_room = v.get_room_in_direction(random_exit)
             if new_room.id != 0:
                 df_dir_traversal_path.append(random_exit)
+            current_room = v # hoist new room to global scope
+            print("current room", current_room.id)
             print('new room, looking for zero', new_room.id)
             draw_master_plan(v, random_exit, new_room)
             s.push(new_room)
-            current_room = v # hoist new room to global scope
             if new_room.id == 0:
                 draw_master_plan(v, random_exit, new_room)
                 print("master plan finished", master_plan)
@@ -142,11 +145,22 @@ def dfrandom(starting_vertex=world.starting_room):
 traversal_path = dfrandom()
 print("depth first direction traversal path", traversal_path)
 print("depth first room traversal path", df_room_traversal_path)
+place_on_path = len(traversal_path) - 1
+print("place on path", place_on_path)
 
-print("Current Room:", current_room, "master Plan:", master_plan)
+print("Current Room:", current_room.id, "master Plan:", master_plan)
+print("mirror traversal_path[place_on_path]",mirror(traversal_path[place_on_path]))
 
+def backtrack():
 
+    while '?' not in master_plan[current_room.id].values():
+        prior_room = current_room.get_room_in_direction(traversal_path[place_on_path])
+        print("While loop running")
+    print("While loop just ran")
+    print("current room", current_room.id, master_plan[current_room.id].values())
 
+        
+backtrack()
 
 for move in traversal_path:
     player.travel(move)
