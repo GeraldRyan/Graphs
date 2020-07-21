@@ -1,7 +1,7 @@
 from room import Room
 from player import Player
 from world import World
-
+from util import Stack, Queue
 import random
 from ast import literal_eval
 
@@ -22,9 +22,9 @@ def mirror(dir):
 # You may uncomment the smaller graphs for development and testing purposes.
 map_file = "maps/test_line.txt"
 map_file = "maps/test_cross.txt"
-# map_file = "maps/test_loop.txt"
-# map_file = "maps/test_loop_fork.txt"
-# map_file = "maps/main_maze.txt"
+map_file = "maps/test_loop.txt"
+map_file = "maps/test_loop_fork.txt"
+map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
@@ -52,11 +52,13 @@ def draw_master_plan(v, direction=None, new_room=None):
         master_plan[new_room.id][exit] = '?'
     master_plan[v.id][direction] = new_room.id
     master_plan[new_room.id][mirror(direction)] = v.id
-    print("updated master plan", master_plan)
+    # print("updated master plan", master_plan)
   
 
 draw_master_plan(starting_room)
-print("master plan", master_plan)
+print("beginning master plan", master_plan)
+my_visited_rooms = set()
+my_visited_rooms.add(starting_room)
 
 def random_step(v=world.starting_room):
   if '?' in master_plan[v.id].values():
@@ -64,16 +66,51 @@ def random_step(v=world.starting_room):
     for exit in v.get_exits():
       if master_plan[v.id][exit] == '?':
         new_room = v.get_room_in_direction(exit)
+        my_visited_rooms.add(new_room)
         draw_master_plan(v, exit, new_room)
         traversal_path.append(exit)
         return new_room
         # TODO Break the for or randomize 
         # TODO change current room
 
-while '?' in master_plan[current_room.id].values():
-  current_room = random_step(current_room)
-  print("current Room", current_room.id)
-  print("Traversal path", traversal_path)
+def find_new_frontier(start):
+  # THere is no where else to go on a subpath so I have to breadth first search to find a new room or path to start on
+  q = Queue()
+  q.enqueue([start])
+  visited = set()
+  while q.size() > 0:
+    path = q.dequeue()
+    v = path[-1]
+    if v.id not in visited:
+      if '?' in master_plan[v.id].values():
+        return path
+      visited.add(v.id)
+      for next_room in v.get_exits():
+        new_path = path.copy()
+        new_path.append(v.get_room_in_direction(next_room))
+        q.enqueue(new_path)
+  return False
+
+
+while len(my_visited_rooms) < len(room_graph):
+  if '?' in master_plan[current_room.id].values():  # current room 2 and ? not in 2
+    current_room = random_step(current_room)
+  else:
+    backgrack_path = find_new_frontier(current_room) # current room 2 and it returns [2,1,0]
+    backgrack_rooms = []
+    for path in backgrack_path:
+      backgrack_rooms.append(path.id) # Stays constant at 2,1,0
+    for path in backgrack_path:
+      if current_room.id == path.id: # if 
+        continue
+      for exit in current_room.get_exits():
+        if master_plan[current_room.id][exit] == path.id:
+          next_room = current_room.get_room_in_direction(exit)
+          traversal_path.append(exit)
+          current_room = next_room
+          break
+
+
 
 
 
