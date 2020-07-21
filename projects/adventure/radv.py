@@ -4,7 +4,7 @@ from world import World
 from util import Stack, Queue
 import random
 from ast import literal_eval
-import time
+import timeit
 
 # Load world
 world = World()
@@ -36,7 +36,6 @@ world.print_rooms()
 starting_room = world.starting_room
 current_room = world.starting_room
 player = Player(world.starting_room)
-master_plan = {}
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
 traversal_path = []
@@ -55,11 +54,6 @@ def draw_master_plan(v, direction=None, new_room=None):
     master_plan[new_room.id][mirror(direction)] = v.id
     # print("updated master plan", master_plan)
   
-
-draw_master_plan(starting_room)
-my_visited_rooms = set()
-my_visited_rooms.add(starting_room)
-
 def random_step(v=world.starting_room):
   if '?' in master_plan[v.id].values():
     # get array of new exits
@@ -91,44 +85,24 @@ def find_new_frontier(start):
         q.enqueue(new_path)
   return False
 
+start_time = timeit.default_timer()
+my_visited_rooms = set()
+master_plan = {}
+draw_master_plan(starting_room)
+my_visited_rooms.add(starting_room)
 
 while len(my_visited_rooms) < len(room_graph):
-  if '?' in master_plan[current_room.id].values():  # current room 2 and ? not in 2
-    current_room = random_step(current_room)
+  if '?' in master_plan[current_room.id].values():
+    current_room = random_step(current_room) # Take a step in a new direction
   else:
-    backgrack_path = find_new_frontier(current_room) # E.g. current room 2 and it returns [2,1,0]
+    backgrack_path = find_new_frontier(current_room) # returns [2,1,0] where 2 is currenr and 0 is frontier and array is path
     for path in backgrack_path:
-      # if current_room.id == path.id:
-      #   continue
       for exit in current_room.get_exits():
         if master_plan[current_room.id][exit] == path.id:
           traversal_path.append(exit)
           current_room = current_room.get_room_in_direction(exit)
           break
-
-
-
-
-
-def bfs(starting_vertex):
-    q = Queue()
-    q.enqueue([starting_vertex])
-    visited = set()  
-    while q.size() > 0:
-        path = q.dequeue()
-        v = path[-1]
-        if v.id not in visited:
-            if '?' in master_plan[v.id].values():
-                return path
-            visited.add(v.id)
-            for next_room in v.get_exits():
-                new_path = path.copy() 
-                new_path.append(v.get_room_in_direction(next_room))
-                q.enqueue(new_path)
-    print("Close to returning None")
-    return None
-
-
+print(f"Program executed in {round(timeit.default_timer() - start_time, 3)} seconds")
 
 # TRAVERSAL TEST
 visited_rooms = set()
