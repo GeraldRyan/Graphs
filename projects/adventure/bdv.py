@@ -104,13 +104,12 @@ def draw_master_plan(v, dir=None, new_room=None):
     
 def dfrandom(starting_vertex=world.starting_room):
     global current_room
-    # might have to make the globals into localsand return them, so I can run this recursively
     s = Stack()
     s.push(starting_vertex)
     visited = set()
     df_dir_traversal_path = []
 
-    while s.size() > 0:
+    while s.size() > 0:  # Get rid of while loop
         v = s.pop()
         if v not in visited:
             visited.add(v)
@@ -118,7 +117,7 @@ def dfrandom(starting_vertex=world.starting_room):
             exits = v.get_exits()
             df_room_traversal_path.append(v.id)
             # print('all exits', exits)
-            if len(exits) == 1 and v.id !=0: # if it's a terminal room but not the beginning
+            if len(exits) == 1: # if it's a terminal room but not the beginning
                 return df_dir_traversal_path
             # take away the mirror of the exit so that if they just went north, then south is out of the list
             if 'random_exit' in locals():
@@ -145,22 +144,73 @@ def dfrandom(starting_vertex=world.starting_room):
 traversal_path = dfrandom()
 print("depth first direction traversal path", traversal_path)
 print("depth first room traversal path", df_room_traversal_path)
-place_on_path = len(traversal_path) - 1
-print("place on path", place_on_path)
+# place_on_path = len(traversal_path) - 1
+# print("place on path", place_on_path)
 
 print("Current Room:", current_room.id, "master Plan:", master_plan)
-print("mirror traversal_path[place_on_path]",mirror(traversal_path[place_on_path]))
+# print("mirror traversal_path[place_on_path]",mirror(traversal_path[place_on_path]))
 
-def backtrack():
+def bfs(starting_vertex):
+    """
+    Return a list containing the shortest path from
+    starting_vertex to destination_vertex in
+    breath-first order.
+    """
+    # Create an empty queue and enqueue A PATH TO the starting vertex ID
+    q = Queue()
+    q.enqueue([starting_vertex])
+    print("check 1, starting vertex", starting_vertex)
+    print("Check 2, q size", q.size())
+    # Create a Set to store visited vertices
+    visited = set()  
+    # While the queue is not empty...
+    while q.size() > 0:
+        # Dequeue the first PATH
+        path = q.dequeue()
+        # Grab the last vertex from the PATH
+        v = path[-1]
+        # print("Spacer and path", path[-1].id)
+        # If that vertex has not been visited...
+        # print(f"v.id and visited {v.id},  {visited}")
+        if v.id not in visited: # THis is where the error is coming from. It is not running this line because it's visited but running prior. So it's not queueing up right I think. `` 
+            # CHECK IF IT'S THE TARGET
+            # if v == destination_vertex:
+            # print("master plan", master_plan)
+            # print("What's in this room's map", master_plan[v.id].values())
+            if '?' in master_plan[v.id].values():
+                # IF SO, RETURN PATH
+                return path
+            # Mark it as visited...
+            visited.add(v.id)
+            # Then add A PATH TO its neighbors to the back of the queue
+                # COPY THE PATH
+                # APPEND THE NEIGHOR TO THE BACK
+            for next_room in v.get_exits():
+                
+                # print(f'room {v.id} should altogether show {v.get_exits()}. this time is {next_room}')
+                new_path = path.copy() 
+                # print("Next room", next_room)
+                # print("v.getroomindirection", v.get_room_in_direction(next_room))
+                new_path.append(v.get_room_in_direction(next_room))
+                # print(f"New Path last id is {new_path[-1].id}")
+                # print([i.id for i in new_path])  # why is this returning a None type. 
+                q.enqueue(new_path)
+    print("Close to returning None")
+    return None # WHy is this getting hit? It should be avoided. There should be a vertex added to stack and it should be 
 
-    while '?' not in master_plan[current_room.id].values():
-        prior_room = current_room.get_room_in_direction(mirror(traversal_path[place_on_path]))
-        print("While loop running")
-    print("While loop just ran")
-    print("current room", current_room.id, master_plan[current_room.id].values())
+# CONCLUSION--- THIS FUNCTION'S QUEUE SIZE IS SHRUNK TO ZERO BEFORE IT SHOULD BE AT ZERO
 
-        
-backtrack()
+print("Current Room 194", current_room)
+path = bfs(current_room)
+print("Path", path)
+intpath = [p.id for p in path]
+print(intpath)
+
+# travel to intpath[-1]
+print("Current room", current_room.id)
+print(intpath[-1])
+
+
 
 for move in traversal_path:
     player.travel(move)
