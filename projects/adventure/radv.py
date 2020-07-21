@@ -37,8 +37,8 @@ starting_room = world.starting_room
 current_room = world.starting_room
 player = Player(world.starting_room)
 # Fill this out with directions to walk
-# traversal_path = ['n', 'n']
 traversal_path = []
+# traversal_path = ['n', 'n']
 
 def draw_master_plan(v, direction=None, new_room=None):
   if v.id not in master_plan:
@@ -52,11 +52,9 @@ def draw_master_plan(v, direction=None, new_room=None):
         master_plan[new_room.id][exit] = '?'
     master_plan[v.id][direction] = new_room.id
     master_plan[new_room.id][mirror(direction)] = v.id
-    # print("updated master plan", master_plan)
   
 def random_step(v=world.starting_room):
   if '?' in master_plan[v.id].values():
-    # get array of new exits
     for exit in v.get_exits():
       if master_plan[v.id][exit] == '?':
         new_room = v.get_room_in_direction(exit)
@@ -64,11 +62,8 @@ def random_step(v=world.starting_room):
         draw_master_plan(v, exit, new_room)
         traversal_path.append(exit)
         return new_room
-        # TODO Break the for or randomize 
-        # TODO change current room
 
 def find_new_frontier(start):
-  # THere is no where else to go on a subpath so I have to breadth first search to find a new room or path to start on
   q = Queue()
   q.enqueue([start])
   visited = set()
@@ -85,6 +80,8 @@ def find_new_frontier(start):
         q.enqueue(new_path)
   return False
 
+
+### Main ###
 start_time = timeit.default_timer()
 my_visited_rooms = set()
 master_plan = {}
@@ -102,7 +99,9 @@ while len(my_visited_rooms) < len(room_graph):
           traversal_path.append(exit)
           current_room = current_room.get_room_in_direction(exit)
           break
+
 print(f"Program executed in {round(timeit.default_timer() - start_time, 3)} seconds")
+### Done ###        
 
 # TRAVERSAL TEST
 visited_rooms = set()
