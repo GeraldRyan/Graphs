@@ -98,8 +98,8 @@ while len(my_visited_rooms) < len(room_graph):
   else:
     backgrack_path = find_new_frontier(current_room) # E.g. current room 2 and it returns [2,1,0]
     for path in backgrack_path:
-      if current_room.id == path.id:
-        continue
+      # if current_room.id == path.id:
+      #   continue
       for exit in current_room.get_exits():
         if master_plan[current_room.id][exit] == path.id:
           traversal_path.append(exit)
