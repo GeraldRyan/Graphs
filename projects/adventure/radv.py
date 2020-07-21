@@ -4,6 +4,7 @@ from world import World
 from util import Stack, Queue
 import random
 from ast import literal_eval
+import time
 
 # Load world
 world = World()
@@ -56,7 +57,6 @@ def draw_master_plan(v, direction=None, new_room=None):
   
 
 draw_master_plan(starting_room)
-print("beginning master plan", master_plan)
 my_visited_rooms = set()
 my_visited_rooms.add(starting_room)
 
@@ -96,18 +96,14 @@ while len(my_visited_rooms) < len(room_graph):
   if '?' in master_plan[current_room.id].values():  # current room 2 and ? not in 2
     current_room = random_step(current_room)
   else:
-    backgrack_path = find_new_frontier(current_room) # current room 2 and it returns [2,1,0]
-    backgrack_rooms = []
+    backgrack_path = find_new_frontier(current_room) # E.g. current room 2 and it returns [2,1,0]
     for path in backgrack_path:
-      backgrack_rooms.append(path.id) # Stays constant at 2,1,0
-    for path in backgrack_path:
-      if current_room.id == path.id: # if 
+      if current_room.id == path.id:
         continue
       for exit in current_room.get_exits():
         if master_plan[current_room.id][exit] == path.id:
-          next_room = current_room.get_room_in_direction(exit)
           traversal_path.append(exit)
-          current_room = next_room
+          current_room = current_room.get_room_in_direction(exit)
           break
 
 
