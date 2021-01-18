@@ -84,6 +84,24 @@ class Graph:
         starting_vertex to destination_vertex in
         breath-first order.
         """
+        queue = Queue()
+        visited = set()
+        if starting_vertex == destination_vertex:
+            return [starting_vertex]
+        queue.enqueue([starting_vertex])
+        visited.add(starting_vertex)
+        while queue.size() > 0:
+            path = queue.dequeue() # a path is a list of nodes and a queue is a list of paths. We'll try an entire path at a time
+            new_frontier_vertex = path[-1]
+            if new_frontier_vertex == destination_vertex:
+                return path
+            for neighbor in self.get_neighbors(new_frontier_vertex):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    new_path = list(path)
+                    new_path.append(neighbor) # new path is path plus. queue is entire path. 
+                    queue.enqueue(new_path)
+
         pass  # TODO
 
     def dfs(self, starting_vertex, destination_vertex):
