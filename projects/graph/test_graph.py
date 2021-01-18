@@ -54,7 +54,8 @@ class Test(unittest.TestCase):
             "1\n2\n4\n3\n7\n5\n6\n"
         ]
 
-        stdout_ = sys.stdout
+        # Clever usage of stdout io python library
+        stdout_ = sys.stdout # GR: I think this is to hold the value in order to restore it later. 
         sys.stdout = io.StringIO()
         self.graph.bft(1)
         output = sys.stdout.getvalue()

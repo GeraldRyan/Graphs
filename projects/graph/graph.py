@@ -1,11 +1,13 @@
 """
 Simple graph implementation
 """
-from util import Stack, Queue  # These may come in handy
+from util import Stack, Queue
+
 
 class Graph:
 
     """Represent a graph as a dictionary of vertices mapping labels to edges."""
+
     def __init__(self):
         self.vertices = {}
 
@@ -13,18 +15,19 @@ class Graph:
         """
         Add a vertex to the graph.
         """
-        pass  # TODO
+        self.vertices[vertex_id] = set()
 
     def add_edge(self, v1, v2):
         """
         Add a directed edge to the graph.
         """
-        pass  # TODO
+        self.vertices[v1].add(v2)
 
     def get_neighbors(self, vertex_id):
         """
         Get all neighbors (edges) of a vertex.
         """
+        return self.vertices[vertex_id]
         pass  # TODO
 
     def bft(self, starting_vertex):
@@ -32,7 +35,16 @@ class Graph:
         Print each vertex in breadth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
+        visited = set()
+        queue = Queue()
+        queue.enqueue(starting_vertex)
+        while (queue.size() > 0):
+            current_vertex = queue.dequeue()
+            print(current_vertex)
+            visited.add(current_vertex)
+            for neighbor in self.vertices[current_vertex]:
+                if neighbor not in visited:
+                    queue.enqueue(neighbor)
 
     def dft(self, starting_vertex):
         """
@@ -75,6 +87,7 @@ class Graph:
         This should be done using recursion.
         """
         pass  # TODO
+
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
